@@ -8,7 +8,7 @@ import Navigation from '@/components/Navigation'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+    <main className="min-h-screen bg-[#0a0a0f]">
       <Navigation />
       <Hero />
       <Features />
