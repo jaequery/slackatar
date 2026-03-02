@@ -4,10 +4,10 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import fs from "fs";
 import path from "path";
 
-process.env.FAL_KEY = "YOUR_FAL_KEY";
+process.env.FAL_KEY = process.env.FAL_KEY || "";
 
 async function fetchCompletedTickets() {
-  const API_KEY = "YOUR_LINEAR_API_KEY";
+  const API_KEY = process.env.LINEAR_API_KEY || "";
   
   try {
     const teamsRes = await fetch("https://api.linear.app/graphql", {
