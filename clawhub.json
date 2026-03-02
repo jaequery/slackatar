@@ -1,0 +1,12 @@
+{
+  "name": "Slackatar",
+  "tagline": "Daily avatar videos from Linear ticket summaries",
+  "description": "Generates photorealistic talking avatar videos summarizing completed Linear tickets. Uses FAL.ai and HeYGen for voiceover and lip-sync, then uploads to S3 or DigitalOcean Spaces.",
+  "category": "productivity",
+  "tags": ["linear", "automation", "video", "avatar", "s3", "scheduling", "heygen", "fal-ai"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "pricing": "free",
+  "support_url": "https://github.com/jaequery/slackatar/issues",
+  "homepage": "https://github.com/jaequery/slackatar"
+}
