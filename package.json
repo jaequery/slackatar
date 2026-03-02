@@ -5,9 +5,6 @@
   "main": "daily_avatar_video.mjs",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
     "generate-video": "node daily_avatar_video.mjs"
   },
   "keywords": [
@@ -29,20 +26,6 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.400.0",
     "@fal-ai/client": "^1.9.4",
-    "dotenv": "^16.4.5",
-    "next": "^14.1.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.2.1",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "latest",
-    "postcss": "latest",
-    "tailwindcss": "latest",
-    "typescript": "^5"
+    "dotenv": "^16.4.5"
   }
-
 }

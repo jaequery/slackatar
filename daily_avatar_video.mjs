@@ -1,8 +1,6 @@
 import "dotenv/config";
 import { fal } from "@fal-ai/client";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import fs from "fs";
-import path from "path";
 
 process.env.FAL_KEY = process.env.FAL_KEY || "";
 
@@ -16,6 +14,7 @@ async function fetchCompletedTickets() {
   }
   
   try {
+    console.log("Fetching Linear teams...");
     const teamsRes = await fetch("https://api.linear.app/graphql", {
       method: "POST",
       headers: {
@@ -36,7 +35,9 @@ async function fetchCompletedTickets() {
       console.error(`Team matching "${TEAM_NAME}" not found`);
       return [];
     }
+    console.log(`Found team: ${targetTeam.name}`);
 
+    console.log("Fetching completed issues...");
     const issuesRes = await fetch("https://api.linear.app/graphql", {
       method: "POST",
       headers: {
@@ -81,9 +82,16 @@ async function generateAvatarVideo(tickets) {
   const script = `Today was productive. We completed ${tickets.length} tickets: ${ticketList}. Great work everyone.`;
 
   try {
-    console.log("Generating avatar video...");
+    console.log("Generating avatar video (this may take 1-2 minutes)...");
     const result = await fal.subscribe("fal-ai/heygen/v2/video-agent", {
-      input: { prompt: script }
+      input: { prompt: script },
+      logs: true,
+      onQueueUpdate: (update) => {
+        if (update.status) console.log(`[fal.ai] ${update.status}`);
+        if (update.logs?.length) {
+          update.logs.forEach((log) => console.log(`  → ${log.message || JSON.stringify(log)}`));
+        }
+      },
     });
 
     if (!result.data.video?.url && !result.data.video_url) {
@@ -91,6 +99,7 @@ async function generateAvatarVideo(tickets) {
       return null;
     }
 
+    console.log("Video generated successfully");
     return result.data.video?.url || result.data.video_url;
   } catch (err) {
     console.error("Error generating video:", err.message);
@@ -100,8 +109,10 @@ async function generateAvatarVideo(tickets) {
 
 async function uploadToS3(videoUrl) {
   try {
+    console.log("Downloading video from fal.ai...");
     const response = await fetch(videoUrl);
     const buffer = await response.arrayBuffer();
+    console.log(`Downloaded ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB`);
 
     const s3Client = new S3Client({
       region: process.env.AWS_REGION || "sfo3",
@@ -116,6 +127,7 @@ async function uploadToS3(videoUrl) {
     const spacesRegion = process.env.AWS_REGION || "sfo3";
     const date = new Date().toISOString().split('T')[0];
     const key = `videos/daily_summary_${date}.mp4`;
+    console.log(`Uploading to S3: s3://${bucketName}/${key}`);
 
     const params = {
       Bucket: bucketName,
@@ -126,6 +138,7 @@ async function uploadToS3(videoUrl) {
     };
 
     await s3Client.send(new PutObjectCommand(params));
+    console.log("Upload complete");
     const spacesEndpoint = process.env.AWS_S3_ENDPOINT || "https://sfo3.digitaloceanspaces.com";
     const baseUrl = spacesEndpoint.replace(/\/$/, ""); // Remove trailing slash if present
     return `${baseUrl}/${key}`;
