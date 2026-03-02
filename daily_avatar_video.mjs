@@ -93,11 +93,11 @@ async function uploadToS3(videoUrl) {
     const buffer = await response.arrayBuffer();
 
     const s3Client = new S3Client({
-      region: "sfo3",
-      endpoint: "https://sfo3.digitaloceanspaces.com",
+      region: process.env.AWS_REGION || "sfo3",
+      endpoint: process.env.AWS_S3_ENDPOINT || "https://sfo3.digitaloceanspaces.com",
       credentials: {
-        accessKeyId: "DO00AT8FUPAZTZ89MPY2",
-        secretAccessKey: "IlocMeaUl2K2/58otPNjvutjbk2B29On8X41bht+RqA",
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
       },
     });
 
