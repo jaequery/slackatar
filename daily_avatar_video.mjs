@@ -139,9 +139,9 @@ async function uploadToS3(videoUrl) {
 
     await s3Client.send(new PutObjectCommand(params));
     console.log("Upload complete");
-    const spacesEndpoint = process.env.AWS_S3_ENDPOINT || "https://sfo3.digitaloceanspaces.com";
-    const baseUrl = spacesEndpoint.replace(/\/$/, ""); // Remove trailing slash if present
-    return `${baseUrl}/${key}`;
+    // Public URL format for DigitalOcean Spaces: https://{bucket}.{region}.digitaloceanspaces.com/{key}
+    const publicUrl = `https://${bucketName}.${spacesRegion}.digitaloceanspaces.com/${key}`;
+    return publicUrl;
   } catch (err) {
     console.error("Error uploading to S3:", err.message);
     return null;
