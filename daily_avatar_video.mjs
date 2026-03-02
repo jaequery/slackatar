@@ -1,5 +1,5 @@
-import pkg from "@fal-ai/client";
-const { fal } = pkg;
+import "dotenv/config";
+import { fal } from "@fal-ai/client";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import fs from "fs";
 import path from "path";
