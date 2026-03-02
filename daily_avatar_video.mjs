@@ -8,6 +8,12 @@ process.env.FAL_KEY = process.env.FAL_KEY || "";
 
 async function fetchCompletedTickets() {
   const API_KEY = process.env.LINEAR_API_KEY || "";
+  const TEAM_NAME = process.env.LINEAR_TEAM_NAME || "";
+  
+  if (!TEAM_NAME) {
+    console.error("LINEAR_TEAM_NAME environment variable is required");
+    return [];
+  }
   
   try {
     const teamsRes = await fetch("https://api.linear.app/graphql", {
@@ -22,9 +28,14 @@ async function fetchCompletedTickets() {
     });
 
     const teamsData = await teamsRes.json();
-    const pintaskTeam = teamsData.data.teams.nodes.find(t => 
-      t.name.toLowerCase().includes("pintask")
+    const targetTeam = teamsData.data.teams.nodes.find(t => 
+      t.name.toLowerCase().includes(TEAM_NAME.toLowerCase())
     );
+
+    if (!targetTeam) {
+      console.error(`Team matching "${TEAM_NAME}" not found`);
+      return [];
+    }
 
     const issuesRes = await fetch("https://api.linear.app/graphql", {
       method: "POST",
@@ -34,7 +45,7 @@ async function fetchCompletedTickets() {
       },
       body: JSON.stringify({
         query: `{
-          team(id: "${pintaskTeam.id}") {
+          team(id: "${targetTeam.id}") {
             issues(filter: { state: { name: { eq: "Done" } } } first: 50) {
               nodes { identifier title completedAt }
             }
@@ -101,11 +112,13 @@ async function uploadToS3(videoUrl) {
       },
     });
 
+    const bucketName = process.env.AWS_S3_BUCKET || "my-bucket";
+    const spacesRegion = process.env.AWS_REGION || "sfo3";
     const date = new Date().toISOString().split('T')[0];
     const key = `videos/daily_summary_${date}.mp4`;
 
     const params = {
-      Bucket: "pintask",
+      Bucket: bucketName,
       Key: key,
       Body: Buffer.from(buffer),
       ContentType: "video/mp4",
@@ -113,7 +126,9 @@ async function uploadToS3(videoUrl) {
     };
 
     await s3Client.send(new PutObjectCommand(params));
-    return `https://pintask.sfo3.digitaloceanspaces.com/${key}`;
+    const spacesEndpoint = process.env.AWS_S3_ENDPOINT || "https://sfo3.digitaloceanspaces.com";
+    const baseUrl = spacesEndpoint.replace(/\/$/, ""); // Remove trailing slash if present
+    return `${baseUrl}/${key}`;
   } catch (err) {
     console.error("Error uploading to S3:", err.message);
     return null;

@@ -53,6 +53,8 @@ Add to crontab:
 
 ## Output
 
-Videos appear in S3: `s3://pintask/videos/daily_summary_YYYY-MM-DD.mp4`
+Videos appear in S3: `s3://{YOUR_BUCKET}/videos/daily_summary_YYYY-MM-DD.mp4`
 
-Public URL: `https://pintask.sfo3.digitaloceanspaces.com/videos/daily_summary_YYYY-MM-DD.mp4`
+Public URL: `https://{YOUR_BUCKET}.{REGION}.digitaloceanspaces.com/videos/daily_summary_YYYY-MM-DD.mp4`
+
+(URLs are auto-generated based on your `AWS_S3_BUCKET` and `AWS_REGION` environment variables)

@@ -1,12 +1,28 @@
 {
-  "name": "slackatar-landing",
+  "name": "slackatar-skill",
   "version": "1.0.0",
-  "description": "Landing page for Slackatar - Automated daily avatar video generation",
+  "description": "Automated daily avatar video generation from Linear ticket summaries",
+  "main": "daily_avatar_video.mjs",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "node daily_avatar_video.mjs",
+    "dev": "node daily_avatar_video.mjs"
+  },
+  "keywords": [
+    "linear",
+    "automation",
+    "video",
+    "avatar",
+    "s3",
+    "scheduling",
+    "heygen",
+    "fal-ai"
+  ],
+  "author": "jaequery",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaequery/slackatar.git"
   },
   "dependencies": {
     "next": "^14.1.0",
@@ -21,6 +37,9 @@
     "autoprefixer": "latest",
     "postcss": "latest",
     "tailwindcss": "latest",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@fal-ai/client": "^0.12.0",
+    "@aws-sdk/client-s3": "^3.400.0"
   }
+
 }
